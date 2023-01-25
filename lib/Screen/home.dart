@@ -5,10 +5,10 @@ import 'package:usis_2/Responsive/responsive_utils.dart';
 import 'package:usis_2/Responsive/tabletView.dart';
 import 'package:usis_2/Responsive/webView.dart';
 import 'package:usis_2/Widget/mobileMenu.dart';
+import 'package:usis_2/constants.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
+ static const String pageName = "/";
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -19,11 +19,12 @@ class _HomeScreenState extends State<HomeScreen> {
     Size screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false, //keyboard hatasını çözer
         drawer: !ResponsiveUtils.isScreenWeb(context) ? mobileMenu() : null,
         body: ResponsiveUtils(
-          screenWeb: webView(screenSize, context),
-          screenTablet: tabletView(screenSize, context),
-          screenMobile: mobileView(screenSize, context),
+          screenWeb: webView(jobsListView,screenSize, context),
+          screenTablet: tabletView(jobsListView,screenSize, context),
+          screenMobile: mobileView(jobsListView,screenSize, context),
         ),
       ),
     );
@@ -31,13 +32,13 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 Widget jobsListView(final BuildContext context, Size screenSize) => Container(
-      color: const Color.fromRGBO(74, 85, 106, 1),
+      color: kContentColor,
       child: Column(
         children: [
           Expanded(
             flex: 1,
             child: Container(
-              color: const Color(0xff333951),
+              color: kPrimaryColor,
               width: screenSize.width,
             ),
           ),
@@ -62,7 +63,7 @@ Widget jobsListView(final BuildContext context, Size screenSize) => Container(
                             padding: const EdgeInsets.all(8.0),
                             child: Container(
                               decoration: BoxDecoration(
-                                  color: const Color(0xff333951),
+                                  color: kPrimaryColor,
                                   borderRadius: BorderRadius.circular(20)),
                               child: const Padding(
                                 padding: EdgeInsets.all(8.0),
@@ -91,35 +92,37 @@ Widget jobsListView(final BuildContext context, Size screenSize) => Container(
           Expanded(
             flex: 3,
             child: Container(
-                height: 100, color: const Color.fromRGBO(74, 85, 106, 1)),
+                height: 100, color: kContentColor),
           ),
         ],
       ),
     );
 
 Widget jobsItems(IconData icon, String data) {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-              color: const Color(0xff333951), borderRadius: BorderRadius.circular(20)),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Icon(
-              icon,
-              size: 20.0,
-              color: Colors.white,
+  return Expanded(
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                color: kPrimaryColor, borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(
+                icon,
+                size: 20.0,
+                color: Colors.white,
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(data),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(data),
+          ),
+        ],
+      ),
     ),
   );
 }

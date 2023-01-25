@@ -3,22 +3,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:usis_2/NavigationBar/src/NavBarItems.dart';
+import 'package:usis_2/Screen/addJob.dart';
+import 'package:usis_2/Screen/home.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
-
   @override
   _NavBarState createState() => _NavBarState();
 }
 
 class _NavBarState extends State<NavBar> {
-  List<bool> selected = [true, false, false, false, false];
+  List<bool> selected = [false, false, false, false, false];
   void select(int n) {
     for (int i = 0; i < 5; i++) {
-      if (i != n) {
-        selected[i] = false;
-      } else {
+      if (i == n) {
         selected[i] = true;
+      } else {
+        selected[i] = false;
       }
     }
   }
@@ -36,15 +37,17 @@ class _NavBarState extends State<NavBar> {
               setState(() {
                 select(0);
               });
+              Navigator.pushNamed(context, HomeScreen.pageName);
             },
           ),
           NavBarItem(
-            icon: Feather.list,
+            icon: Feather.plus_circle,
             active: selected[1],
             touched: () {
               setState(() {
                 select(1);
               });
+              Navigator.pushNamed(context, AddJobScreen.pageName);
             },
           ),
           NavBarItem(

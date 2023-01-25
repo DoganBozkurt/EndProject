@@ -3,9 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:usis_2/NavigationBar/NavigationBar.dart';
 import 'package:usis_2/Responsive/responsive_utils.dart';
-import 'package:usis_2/Screen/home.dart';
 
-Widget webView(Size screenSize, BuildContext context) {
+Widget webView(Widget Function(BuildContext context,Size screenSize) ekran,Size screenSize, BuildContext context) {
   return Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -14,7 +13,7 @@ Widget webView(Size screenSize, BuildContext context) {
           child: const NavigationBarr(),),
       Expanded(
           flex: screenSize.width > ResponsiveUtils.tabletWidthLimit ? 11 : 11,
-          child: jobsListView(context, screenSize)),
+          child: ekran(context, screenSize)),
     ],
   );
 }
