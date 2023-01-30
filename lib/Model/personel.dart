@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 List<Personel> personelFromJson(String str) => List<Personel>.from(json.decode(str).map((x) => Personel.fromJson(x)));
-String depoListToJson(List<Personel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String personelToJson(List<Personel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Personel {
   int sNo;

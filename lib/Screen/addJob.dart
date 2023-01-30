@@ -4,6 +4,7 @@ import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:usis_2/Model/personel.dart';
+import 'package:usis_2/Model/tezgah.dart';
 import 'package:usis_2/Responsive/mobileView.dart';
 import 'package:usis_2/Responsive/responsive_utils.dart';
 import 'package:usis_2/Responsive/tabletView.dart';
@@ -24,10 +25,12 @@ class _AddJobScreenState extends State<AddJobScreen> {
   String? baslamaTarihiFormatli;
   TimeOfDay? baslamaSaati;
   final List<SelectedListItem> selectPersonel = [];
+  final List<SelectedListItem> selectTezgah = [];
   List<Personel>? personel;
-  String secilenPersonel="";
+  List<Tezgah>? tezgah;
+  String secilenPersonel = "";
   TextEditingController personelSec = TextEditingController();
-  TextEditingController fiyat = TextEditingController();
+  TextEditingController tezgahSec = TextEditingController();
 
   @override
   void initState() {
@@ -37,10 +40,17 @@ class _AddJobScreenState extends State<AddJobScreen> {
 
   getData() async {
     personel = await RemoteService().getPersonel();
-    if (personel != null) {
+    tezgah = await RemoteService().getTezgah();
+    if (personel != null && tezgah != null) {
       personel
           ?.map((e) => selectPersonel.add(SelectedListItem(
               name: '${e.ad} ${e.soyad}', value: e.kod.toString())))
+          .toList();
+
+      tezgah
+          ?.map((e) => selectTezgah.add(SelectedListItem(
+              name: "${e.tezgahAdi} | ${e.tezgahKodu}",
+              value: e.tkkid.toString())))
           .toList();
     }
   }
@@ -68,14 +78,14 @@ class _AddJobScreenState extends State<AddJobScreen> {
         }));
   }
 
-  void onTextFieldTapPersonel(List<SelectedListItem> pData) {
+  void onTextFieldTap(List<SelectedListItem> pData, String listTitle) {
     DropDownState(
       DropDown(
           enableMultipleSelection: false,
           data: pData,
-          bottomSheetTitle: const Text(
-            "Personel Listesi",
-            style: TextStyle(
+          bottomSheetTitle: Text(
+            listTitle,
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20.0,
             ),
@@ -83,7 +93,14 @@ class _AddJobScreenState extends State<AddJobScreen> {
           selectedItems: (List<dynamic> selectedList) {
             for (var item in selectedList) {
               if (item is SelectedListItem) {
-                personelSec.text=item.name;
+                switch (listTitle) {
+                  case "Personel Seç":
+                    personelSec.text = item.name;
+                    break;
+                    case "Tezgah Seç":
+                    tezgahSec.text = item.name;
+                    break;
+                }
               }
             }
           }),
@@ -114,27 +131,8 @@ class _AddJobScreenState extends State<AddJobScreen> {
             "İŞ EKLEME PANELİ",
             style: TextStyle(color: kPrimaryColor, fontSize: 18),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: personelSec,
-              readOnly: true,
-              onTap: () => onTextFieldTapPersonel(selectPersonel),
-              decoration:  InputDecoration(
-                contentPadding: const EdgeInsets.all(25),
-                hintText: personelSec.text == "" ? "Personel seç" : personelSec.text,
-                hintStyle: const TextStyle(fontSize: 14),
-                border: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(5),
-                  ),
-                  borderSide: BorderSide(color: kPrimaryColor),
-                ),
-                suffixIcon: const Icon(Icons.person),
-              ),
-            ),
-          ),
-          adetFiyatTextField("Ürün Bilgileri", fiyat),
+          listDialog(selectPersonel, personelSec, "Personel Seç",Icons.person),
+          listDialog(selectTezgah, tezgahSec, "Tezgah Seç",Icons.list),
           Row(
             children: [
               rowTarih(context),
@@ -155,6 +153,30 @@ class _AddJobScreenState extends State<AddJobScreen> {
           ),
         ],
       );
+
+  Padding listDialog(List<SelectedListItem> selectList,
+      TextEditingController hintTxt, String nullHintTxt,IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        controller: hintTxt,
+        readOnly: true,
+        onTap: () => onTextFieldTap(selectList, nullHintTxt),
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.all(25),
+          hintText: hintTxt.text == "" ? nullHintTxt : hintTxt.text,
+          hintStyle: const TextStyle(fontSize: 14),
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(5),
+            ),
+            borderSide: BorderSide(color: kPrimaryColor),
+          ),
+          suffixIcon:  Icon(icon),
+        ),
+      ),
+    );
+  }
 
   Widget rowTarih(BuildContext context) {
     return Row(
