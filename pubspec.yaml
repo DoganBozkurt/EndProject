@@ -38,6 +38,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_vector_icons: ^2.0.0
   awesome_dialog: ^3.0.2
+  intl: ^0.18.0
+  drop_down_list: ^0.0.4
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_test:

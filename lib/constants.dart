@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 
 const  kPrimaryColor = Color(0xff333951);
 const kContentColor = Color.fromRGBO(33, 35, 50, 1);
-
+const constUrl="https://7845-95-2-8-53.eu.ngrok.io";
 AwesomeDialog logOutDialog(
     BuildContext context, String title, String desc, DialogType sorun) {
   return AwesomeDialog(
