@@ -3,6 +3,7 @@ import 'package:drop_down_list/drop_down_list.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:usis_2/Model/op.dart';
 import 'package:usis_2/Model/personel.dart';
 import 'package:usis_2/Model/tezgah.dart';
 import 'package:usis_2/Responsive/mobileView.dart';
@@ -26,11 +27,14 @@ class _AddJobScreenState extends State<AddJobScreen> {
   TimeOfDay? baslamaSaati;
   final List<SelectedListItem> selectPersonel = [];
   final List<SelectedListItem> selectTezgah = [];
+  final List<SelectedListItem> selectOp = [];
   List<Personel>? personel;
   List<Tezgah>? tezgah;
+  List<Op>? op;
   String secilenPersonel = "";
   TextEditingController personelSec = TextEditingController();
   TextEditingController tezgahSec = TextEditingController();
+  TextEditingController opSec = TextEditingController();
 
   @override
   void initState() {
@@ -41,6 +45,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
   getData() async {
     personel = await RemoteService().getPersonel();
     tezgah = await RemoteService().getTezgah();
+    //op = await RemoteService().getOp();
     if (personel != null && tezgah != null) {
       personel
           ?.map((e) => selectPersonel.add(SelectedListItem(
@@ -51,6 +56,11 @@ class _AddJobScreenState extends State<AddJobScreen> {
           ?.map((e) => selectTezgah.add(SelectedListItem(
               name: "${e.tezgahAdi} | ${e.tezgahKodu}",
               value: e.tkkid.toString())))
+          .toList();
+
+      op
+          ?.map((e) => selectOp.add(SelectedListItem(
+              name: "${e.cariAdi} | ${e.stokKodu}", value: e.iENo)))
           .toList();
     }
   }
@@ -97,8 +107,11 @@ class _AddJobScreenState extends State<AddJobScreen> {
                   case "Personel Seç":
                     personelSec.text = item.name;
                     break;
-                    case "Tezgah Seç":
+                  case "Tezgah Seç":
                     tezgahSec.text = item.name;
+                    break;
+                    case "Op Seç":
+                    opSec.text = item.name;
                     break;
                 }
               }
@@ -131,8 +144,9 @@ class _AddJobScreenState extends State<AddJobScreen> {
             "İŞ EKLEME PANELİ",
             style: TextStyle(color: kPrimaryColor, fontSize: 18),
           ),
-          listDialog(selectPersonel, personelSec, "Personel Seç",Icons.person),
-          listDialog(selectTezgah, tezgahSec, "Tezgah Seç",Icons.list),
+          listDialog(selectPersonel, personelSec, "Personel Seç", Icons.person),
+          listDialog(selectTezgah, tezgahSec, "Tezgah Seç", Icons.list),
+          listDialog(selectOp, opSec, "Op Seç", Icons.join_full),
           Row(
             children: [
               rowTarih(context),
@@ -155,7 +169,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
       );
 
   Padding listDialog(List<SelectedListItem> selectList,
-      TextEditingController hintTxt, String nullHintTxt,IconData icon) {
+      TextEditingController hintTxt, String nullHintTxt, IconData icon) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
@@ -172,7 +186,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
             ),
             borderSide: BorderSide(color: kPrimaryColor),
           ),
-          suffixIcon:  Icon(icon),
+          suffixIcon: Icon(icon),
         ),
       ),
     );
