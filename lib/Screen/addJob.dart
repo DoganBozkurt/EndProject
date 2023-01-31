@@ -45,8 +45,8 @@ class _AddJobScreenState extends State<AddJobScreen> {
   getData() async {
     personel = await RemoteService().getPersonel();
     tezgah = await RemoteService().getTezgah();
-    //op = await RemoteService().getOp();
-    if (personel != null && tezgah != null) {
+    op = await RemoteService().getOp();
+    if (personel != null && tezgah != null && op != null) {
       personel
           ?.map((e) => selectPersonel.add(SelectedListItem(
               name: '${e.ad} ${e.soyad}', value: e.kod.toString())))
@@ -60,7 +60,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
 
       op
           ?.map((e) => selectOp.add(SelectedListItem(
-              name: "${e.cariAdi} | ${e.stokKodu}", value: e.iENo)))
+              name: "${e.cariAdi} | ${e.stokKodu}", value: e.ieNo)))
           .toList();
     }
   }
