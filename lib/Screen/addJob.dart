@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, use_key_in_widget_constructors, must_be_immutable, unnecessary_null_comparison
+// ignore_for_file: file_names, use_key_in_widget_constructors, must_be_immutable, unnecessary_null_comparison, sort_child_properties_last
 import 'package:drop_down_list/drop_down_list.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +22,7 @@ class AddJobScreen extends StatefulWidget {
 }
 
 class _AddJobScreenState extends State<AddJobScreen> {
+  bool isLoaded =false;
   DateTime? baslamaTarihi;
   String? baslamaTarihiFormatli;
   TimeOfDay? baslamaSaati;
@@ -47,6 +48,9 @@ class _AddJobScreenState extends State<AddJobScreen> {
     tezgah = await RemoteService().getTezgah();
     op = await RemoteService().getOp();
     if (personel != null && tezgah != null && op != null) {
+      setState(() {
+      isLoaded=true;
+      });
       personel
           ?.map((e) => selectPersonel.add(SelectedListItem(
               name: '${e.ad} ${e.soyad}', value: e.kod.toString())))
@@ -127,10 +131,14 @@ class _AddJobScreenState extends State<AddJobScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false, //keyboard hatasını çözer
         drawer: !ResponsiveUtils.isScreenWeb(context) ? mobileMenu() : null,
-        body: ResponsiveUtils(
-          screenWeb: webView(columnIsPanelli, screenSize, context),
-          screenTablet: tabletView(columnIsPanelli, screenSize, context),
-          screenMobile: mobileView(columnIsPanelli, screenSize, context),
+        body: Visibility(
+          visible: isLoaded,
+          replacement: const Center(child: CircularProgressIndicator(),),
+          child: ResponsiveUtils(
+            screenWeb: webView(columnIsPanelli, screenSize, context),
+            screenTablet: tabletView(columnIsPanelli, screenSize, context),
+            screenMobile: mobileView(columnIsPanelli, screenSize, context),
+          ),
         ),
       ),
     );
