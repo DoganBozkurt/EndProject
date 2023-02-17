@@ -1,4 +1,6 @@
-// ignore_for_file: file_names, use_key_in_widget_constructors, must_be_immutable, unnecessary_null_comparison, sort_child_properties_last
+// ignore_for_file: file_names, use_key_in_widget_constructors, must_be_immutable, unnecessary_null_comparison, sort_child_properties_last, use_build_context_synchronously, unrelated_type_equality_checks
+
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:drop_down_list/drop_down_list.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +24,7 @@ class AddJobScreen extends StatefulWidget {
 }
 
 class _AddJobScreenState extends State<AddJobScreen> {
-  bool isLoaded =false;
+  bool isLoaded = false;
   DateTime? baslamaTarihi;
   String? baslamaTarihiFormatli;
   TimeOfDay? baslamaSaati;
@@ -32,11 +34,12 @@ class _AddJobScreenState extends State<AddJobScreen> {
   List<Personel>? personel;
   List<Tezgah>? tezgah;
   List<Op>? op;
+
   String secilenPersonel = "";
   TextEditingController personelSec = TextEditingController();
   TextEditingController tezgahSec = TextEditingController();
   TextEditingController opSec = TextEditingController();
-
+  Map mapPostData = {};
   @override
   void initState() {
     super.initState();
@@ -49,7 +52,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
     op = await RemoteService().getOp();
     if (personel != null && tezgah != null && op != null) {
       setState(() {
-      isLoaded=true;
+        isLoaded = true;
       });
       personel
           ?.map((e) => selectPersonel.add(SelectedListItem(
@@ -58,13 +61,14 @@ class _AddJobScreenState extends State<AddJobScreen> {
 
       tezgah
           ?.map((e) => selectTezgah.add(SelectedListItem(
-              name: "${e.tezgahAdi} | ${e.tezgahKodu}",
+              name: "${e.tezgahKodu}-${e.tezgahAdi}",
               value: e.tkkid.toString())))
           .toList();
 
       op
           ?.map((e) => selectOp.add(SelectedListItem(
-              name: "${e.cariAdi} | ${e.stokKodu}", value: e.ieNo)))
+              name: "${e.cariAdi} | ${e.stokKodu}",
+              value: e.ieUrPlID.toString())))
           .toList();
     }
   }
@@ -79,17 +83,29 @@ class _AddJobScreenState extends State<AddJobScreen> {
       setState(() {
         baslamaTarihi = picked;
         baslamaTarihiFormatli = DateFormat('dd-MM-yyyy').format(baslamaTarihi!);
+        mapPostData.addAll({"Tarih": DateFormat('yyy-MM-dd').format(baslamaTarihi!)});
       });
     }
   }
 
-  void selectTimePicker() {
-    showTimePicker(
+  void selectTimePicker() async{
+   var saat = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
-    ).then((value) => setState(() {
-          baslamaSaati = value;
-        }));
+    );
+    if (saat !=null) {
+      setState(() {
+          baslamaSaati = saat;
+          mapPostData.addAll({
+            "Saat": baslamaSaati!
+                .format(context)
+                .substring(0, 5)
+                .trimRight()
+                .trimLeft()
+                .toString()
+          });
+        });
+    }
   }
 
   void onTextFieldTap(List<SelectedListItem> pData, String listTitle) {
@@ -108,14 +124,17 @@ class _AddJobScreenState extends State<AddJobScreen> {
             for (var item in selectedList) {
               if (item is SelectedListItem) {
                 switch (listTitle) {
-                  case "Personel Seç":
+                  case "Operatör Seç":
                     personelSec.text = item.name;
+                    mapPostData.addAll({"Kod": item.value});
                     break;
                   case "Tezgah Seç":
                     tezgahSec.text = item.name;
+                    mapPostData.addAll({"TKKID": item.value});
                     break;
-                    case "Op Seç":
+                  case "Ürün Ve Operasyon Seç":
                     opSec.text = item.name;
+                    mapPostData.addAll({"IEUrplID": item.value});
                     break;
                 }
               }
@@ -133,7 +152,9 @@ class _AddJobScreenState extends State<AddJobScreen> {
         drawer: !ResponsiveUtils.isScreenWeb(context) ? mobileMenu() : null,
         body: Visibility(
           visible: isLoaded,
-          replacement: const Center(child: CircularProgressIndicator(),),
+          replacement: const Center(
+            child: CircularProgressIndicator(),
+          ),
           child: ResponsiveUtils(
             screenWeb: webView(columnIsPanelli, screenSize, context),
             screenTablet: tabletView(columnIsPanelli, screenSize, context),
@@ -152,9 +173,9 @@ class _AddJobScreenState extends State<AddJobScreen> {
             "İŞ EKLEME PANELİ",
             style: TextStyle(color: kPrimaryColor, fontSize: 18),
           ),
-          listDialog(selectPersonel, personelSec, "Personel Seç", Icons.person),
+          listDialog(selectPersonel, personelSec, "Operatör Seç", Icons.person),
           listDialog(selectTezgah, tezgahSec, "Tezgah Seç", Icons.list),
-          listDialog(selectOp, opSec, "Op Seç", Icons.join_full),
+          listDialog(selectOp, opSec, "Ürün Ve Operasyon Seç", Icons.join_full),
           Row(
             children: [
               rowTarih(context),
@@ -167,7 +188,20 @@ class _AddJobScreenState extends State<AddJobScreen> {
                 backgroundColor: kPrimaryColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5))),
-            onPressed: () {},
+            onPressed: () async {
+              if (personelSec.text !=null && tezgahSec.text!=null && opSec.text!=null  && baslamaSaati!=null && baslamaTarihi!=null) {
+              var result = await RemoteService().postIsBaslat(mapPostData);
+              if (result==true) {
+                islemDialog(context, "İşlem Başarılı", "İş başarıyla başlatıldı.", DialogType.success);
+              }
+              else{
+                islemDialog(context, "İşlem Başarısız", "İş başlatılmadı lütfen tekrar deneyiniz.", DialogType.error);
+              }
+              }
+              else{
+                 islemDialog(context, "Eksik Alan", "İş başlatılmadı lütfen tüm gerekli bilgileri giriniz.", DialogType.info);
+              }
+            },
             child: const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text("BAŞLA"),
@@ -257,22 +291,3 @@ class _AddJobScreenState extends State<AddJobScreen> {
   }
 }
 
-Padding adetFiyatTextField(String hint, TextEditingController kontroler) {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: TextField(
-      controller: kontroler,
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.all(25),
-        hintText: hint,
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(5),
-          ),
-          borderSide: BorderSide(color: kPrimaryColor),
-        ),
-      ),
-    ),
-  );
-}

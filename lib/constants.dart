@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 
 const  kPrimaryColor = Color(0xff333951);
 const kContentColor = Color.fromRGBO(33, 35, 50, 1);
-const constUrl="https://3350-88-242-133-90.eu.ngrok.io";
+const constUrl="https://59cd-149-140-0-252.eu.ngrok.io";
 AwesomeDialog logOutDialog(
     BuildContext context, String title, String desc, DialogType sorun) {
   return AwesomeDialog(
@@ -33,4 +33,24 @@ AwesomeDialog logOutDialog(
           exit(0);
         }
       });
+}
+Future islemDialog(
+    BuildContext context, String title, String desc, DialogType sorun) {
+  return AwesomeDialog(
+      btnCancelText: "TAMAM",
+      btnCancelColor: Colors.blue,
+      btnOkColor: Colors.red,
+      dialogBackgroundColor: kPrimaryColor,
+      context: context,
+      dialogType: sorun,
+      width: 500,
+      borderSide: const BorderSide(color: Colors.green, width: 2),
+      buttonsBorderRadius: const BorderRadius.all(Radius.circular(2)),
+      headerAnimationLoop: false,
+      animType: AnimType.leftSlide,
+      title: title,titleTextStyle: const TextStyle(color: Colors.white,fontSize: 20),
+      desc: desc,descTextStyle: const TextStyle(color: Colors.white),
+      showCloseIcon: true,
+      btnOkOnPress: () {
+      }).show();
 }
