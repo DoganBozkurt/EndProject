@@ -83,28 +83,29 @@ class _AddJobScreenState extends State<AddJobScreen> {
       setState(() {
         baslamaTarihi = picked;
         baslamaTarihiFormatli = DateFormat('dd-MM-yyyy').format(baslamaTarihi!);
-        mapPostData.addAll({"Tarih": DateFormat('yyy-MM-dd').format(baslamaTarihi!)});
+        mapPostData
+            .addAll({"Tarih": DateFormat('yyy-MM-dd').format(baslamaTarihi!)});
       });
     }
   }
 
-  void selectTimePicker() async{
-   var saat = await showTimePicker(
+  void selectTimePicker() async {
+    var saat = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
-    if (saat !=null) {
+    if (saat != null) {
       setState(() {
-          baslamaSaati = saat;
-          mapPostData.addAll({
-            "Saat": baslamaSaati!
-                .format(context)
-                .substring(0, 5)
-                .trimRight()
-                .trimLeft()
-                .toString()
-          });
+        baslamaSaati = saat;
+        mapPostData.addAll({
+          "Saat": baslamaSaati!
+              .format(context)
+              .substring(0, 5)
+              .trimRight()
+              .trimLeft()
+              .toString()
         });
+      });
     }
   }
 
@@ -166,12 +167,21 @@ class _AddJobScreenState extends State<AddJobScreen> {
   }
 
   Widget columnIsPanelli(final BuildContext context, Size screenSize) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "İŞ EKLEME PANELİ",
-            style: TextStyle(color: kPrimaryColor, fontSize: 18),
+          Container(
+            color: kPrimaryColor,
+            width: screenSize.width,
+            child: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                "İŞ EKLEME PANELİ",
+                style: TextStyle(color: Colors.white, fontSize: 25,fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ),
           ),
           listDialog(selectPersonel, personelSec, "Operatör Seç", Icons.person),
           listDialog(selectTezgah, tezgahSec, "Tezgah Seç", Icons.list),
@@ -182,29 +192,46 @@ class _AddJobScreenState extends State<AddJobScreen> {
               rowSaat(context),
             ],
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                shadowColor: kContentColor,
-                backgroundColor: kPrimaryColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5))),
-            onPressed: () async {
-              if (personelSec.text !=null && tezgahSec.text!=null && opSec.text!=null  && baslamaSaati!=null && baslamaTarihi!=null) {
-              var result = await RemoteService().postIsBaslat(mapPostData);
-              if (result==true) {
-                islemDialog(context, "İşlem Başarılı", "İş başarıyla başlatıldı.", DialogType.success);
-              }
-              else{
-                islemDialog(context, "İşlem Başarısız", "İş başlatılmadı lütfen tekrar deneyiniz.", DialogType.error);
-              }
-              }
-              else{
-                 islemDialog(context, "Eksik Alan", "İş başlatılmadı lütfen tüm gerekli bilgileri giriniz.", DialogType.info);
-              }
-            },
-            child: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text("BAŞLA"),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  shadowColor: kContentColor,
+                  backgroundColor: kPrimaryColor,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5))),
+              onPressed: () async {
+                if (personelSec.text != "" &&
+                    tezgahSec.text != "" &&
+                    opSec.text != "" &&
+                    baslamaSaati != "" &&
+                    baslamaTarihi != "") {
+                  var result = await RemoteService().postIsBaslat(mapPostData);
+                  if (result == true) {
+                    islemDialog(context, "İşlem Başarılı",
+                        "İş başarıyla başlatıldı.", DialogType.success);
+                  } else {
+                    islemDialog(
+                        context,
+                        "İşlem Başarısız",
+                        "İş başlatılmadı lütfen tekrar deneyiniz.",
+                        DialogType.error);
+                  }
+                } else {
+                  islemDialog(
+                      context,
+                      "Eksik Alan",
+                      "İş başlatılmadı lütfen tüm gerekli bilgileri giriniz.",
+                      DialogType.info);
+                }
+              },
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "BAŞLA",
+                  style: TextStyle(fontSize: 25),
+                ),
+              ),
             ),
           ),
         ],
@@ -221,7 +248,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.all(25),
           hintText: hintTxt.text == "" ? nullHintTxt : hintTxt.text,
-          hintStyle: const TextStyle(fontSize: 14),
+          hintStyle: const TextStyle(fontSize: 20),
           border: const OutlineInputBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(5),
@@ -241,7 +268,10 @@ class _AddJobScreenState extends State<AddJobScreen> {
           padding: const EdgeInsets.all(8.0),
           child: DecoratedBox(
             decoration: BoxDecoration(
-                color: kPrimaryColor,
+                gradient: const LinearGradient(colors: [
+                  Color.fromARGB(241, 255, 193, 7),
+                  Color.fromARGB(200, 255, 193, 7),
+                ]),
                 borderRadius: BorderRadius.circular(2),
                 boxShadow: const <BoxShadow>[BoxShadow(blurRadius: 3)]),
             child: TextButton(
@@ -250,14 +280,14 @@ class _AddJobScreenState extends State<AddJobScreen> {
               },
               child: const Text(
                 "Tarih Seç",
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white,fontSize: 20),
               ),
             ),
           ),
         ),
         baslamaTarihiFormatli != null
             ? Text("$baslamaTarihiFormatli")
-            : const Text(":Tarih şeçilmedi")
+            : const Text(":Tarih şeçilmedi",style: TextStyle(fontSize: 18))
       ],
     );
   }
@@ -269,7 +299,10 @@ class _AddJobScreenState extends State<AddJobScreen> {
           padding: const EdgeInsets.all(8.0),
           child: DecoratedBox(
             decoration: BoxDecoration(
-                color: kPrimaryColor,
+                gradient: const LinearGradient(colors: [
+                  Color.fromARGB(241, 255, 193, 7),
+                  Color.fromARGB(200, 255, 193, 7),
+                ]),
                 borderRadius: BorderRadius.circular(2),
                 boxShadow: const <BoxShadow>[BoxShadow(blurRadius: 3)]),
             child: TextButton(
@@ -278,16 +311,15 @@ class _AddJobScreenState extends State<AddJobScreen> {
               },
               child: const Text(
                 "Saat Seç",
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white,fontSize: 20),
               ),
             ),
           ),
         ),
         baslamaSaati != null
             ? Text(baslamaSaati!.format(context).toString())
-            : const Text(":Saat şeçilmedi")
+            : const Text(":Saat şeçilmedi",style: TextStyle(fontSize: 18))
       ],
     );
   }
 }
-
