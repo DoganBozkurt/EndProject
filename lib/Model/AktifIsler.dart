@@ -12,6 +12,7 @@ class AktifIsler {
   DateTime baslamaTarihi;
   DateTime baslamaSaati;
   String tezgahKodu;
+  String tezgahAdi;
   String ieNo;
   dynamic stokKodu;
   dynamic stokAdi;
@@ -27,6 +28,7 @@ class AktifIsler {
       required this.baslamaTarihi,
       required this.baslamaSaati,
       required this.tezgahKodu,
+      required this.tezgahAdi,
       required this.ieNo,
       this.stokKodu,
       this.stokAdi,
@@ -42,6 +44,7 @@ class AktifIsler {
         baslamaTarihi: DateTime.parse(json["baslamaTarihi"]),
         baslamaSaati: DateTime.parse(json["baslamaSaati"]),
         tezgahKodu: json["tezgahKodu"],
+        tezgahAdi: json["tezgahAdi"],
         ieNo: json["ieNo"],
         stokKodu: json["stokKodu"],
         stokAdi: json["stokAdi"],

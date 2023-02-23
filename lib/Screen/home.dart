@@ -25,6 +25,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool isLoaded = false;
   List<AktifIsler>? aktifIs;
+  List<AktifIsler>? searchAktifIs;
+  TextEditingController searchCont = TextEditingController();
 
   @override
   void initState() {
@@ -36,8 +38,24 @@ class _HomeScreenState extends State<HomeScreen> {
     aktifIs = await RemoteService().getAktifIsler();
     if (aktifIs != null) {
       setState(() {
+        searchAktifIs = aktifIs;
         isLoaded = true;
       });
+    }
+  }
+
+  void searchData(String query) {
+    if (searchCont.text != "") {
+      final suggestion = searchAktifIs?.where((data) {
+        final tezgahKodu = data.tezgahKodu.toLowerCase();
+        final isEmriNo = data.ieNo.toString().toLowerCase();
+        final input = query.toLowerCase();
+        return tezgahKodu.contains(input) || isEmriNo.contains(input);
+      }).toList();
+      setState(() => aktifIs = suggestion);
+    }
+    if (searchCont.text == "") {
+      setState(() => aktifIs = searchAktifIs);
     }
   }
 
@@ -55,7 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
             screenTablet: tabletView(jobsListView, screenSize, context),
             screenMobile: mobileView(jobsListView, screenSize, context),
           ),
-          replacement: const Center(child: CircularProgressIndicator(),),
+          replacement: const Center(
+            child: CircularProgressIndicator(),
+          ),
         ),
       ),
     );
@@ -85,13 +105,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     Positioned(
+                      child: SizedBox(
+                        width: screenSize.width - 300,
+                        child: search(),
+                      ),
+                    ),
+                    Positioned(
                       top: 10,
                       right: 1,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(DateFormat('dd-MM-yyyy').format(
-                          DateTime.now(),
-                        ),style:  const TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
+                        child: Text(
+                          DateFormat('dd-MM-yyyy').format(
+                            DateTime.now(),
+                          ),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
                       ),
                     ),
                   ],
@@ -137,9 +167,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       aktifIs![index].resim),
                                                 ),
                                               )
-                                            :  Expanded(
+                                            : Expanded(
                                                 flex: 4,
-                                                child: Image.asset("assets/image/Worker.png")),
+                                                child: Image.asset(
+                                                    "assets/image/Worker.png")),
                                         Expanded(
                                           flex: 1,
                                           child: Padding(
@@ -169,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ]),
                           ),
                           const Divider(
-                            height: 35,
+                            height: 5,
                             color: kContentColor,
                           ),
                           Expanded(
@@ -191,6 +222,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       jobsItems(
                                           Icons.production_quantity_limits,
                                           'Cari: Cari Eklenecek'),
+                                      jobsItems(Icons.numbers_sharp,
+                                          'Tazgah Adı: ${aktifIs![index].tezgahAdi}'),
                                     ],
                                   ),
                                 ),
@@ -208,6 +241,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           'Operasyon No: ${aktifIs![index].operasyonNo}'),
                                       jobsItems(Icons.near_me,
                                           'Operasyon Adı: ${aktifIs![index].operasyonAd}'),
+                                      jobsItems(Icons.numbers_sharp,
+                                          'Tazgah Kodu: ${aktifIs![index].tezgahKodu}'),
                                     ],
                                   ),
                                 ),
@@ -221,41 +256,68 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            Expanded(
-              flex: 1,
-              child: Container(height: 100, color: kContentColor),
-            ),
           ],
         ),
       );
-}
-
-Widget jobsItems(IconData icon, String data) {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-              color: kPrimaryColor, borderRadius: BorderRadius.circular(20)),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Icon(
-              icon,
-              size: 25.0,
-              color: Colors.white,
+  search() {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: TextField(
+        controller: searchCont,
+        decoration: const InputDecoration(
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(25),
+            ),
+            borderSide:
+                BorderSide(width: 1, color: Color.fromARGB(241, 255, 193, 7)),
+          ),
+          contentPadding: EdgeInsets.all(5),
+          prefixIcon: Icon(
+            Icons.search,
+            color: Color.fromARGB(241, 255, 193, 7),
+          ),
+          hintText: "Tezgah kodu veya iş emri numarası ile ara...",
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(25),
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            data,
-            style: const TextStyle(fontSize: 15),
+        onChanged: (value) => searchData(value),
+      ),
+    );
+  }
+}
+
+Widget jobsItems(IconData icon, String data) {
+  return Expanded(
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                color: kPrimaryColor, borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(
+                icon,
+                size: 25.0,
+                color: Colors.white,
+              ),
+            ),
           ),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              data,
+              style: const TextStyle(fontSize: 15),
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }
