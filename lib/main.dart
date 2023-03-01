@@ -12,7 +12,7 @@ void main()
       debugShowCheckedModeBanner: false,
       initialRoute: HomeScreen.pageName,
       routes: {
-        HomeScreen.pageName: (context) =>  HomeScreen(),
+        HomeScreen.pageName: (context) =>  const HomeScreen(),
         AddJobScreen.pageName: (context) => const AddJobScreen()
         },
     ),

@@ -1,9 +1,5 @@
 // ignore_for_file: sort_child_properties_last
-
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:usis_2/Model/AktifIsler.dart';
 import 'package:usis_2/Responsive/mobileView.dart';
@@ -11,6 +7,7 @@ import 'package:usis_2/Responsive/responsive_utils.dart';
 import 'package:usis_2/Responsive/tabletView.dart';
 import 'package:usis_2/Responsive/webView.dart';
 import 'package:usis_2/Services/remoteService.dart';
+import 'package:usis_2/Widget/jobCard.dart';
 import 'package:usis_2/Widget/mobileMenu.dart';
 import 'package:usis_2/constants.dart';
 
@@ -49,8 +46,9 @@ class _HomeScreenState extends State<HomeScreen> {
       final suggestion = searchAktifIs?.where((data) {
         final tezgahKodu = data.tezgahKodu.toLowerCase();
         final isEmriNo = data.ieNo.toString().toLowerCase();
+        final operator = data.adSoyad.toString().toLowerCase();
         final input = query.toLowerCase();
-        return tezgahKodu.contains(input) || isEmriNo.contains(input);
+        return tezgahKodu.contains(input) || isEmriNo.contains(input) || operator.contains(input);
       }).toList();
       setState(() => aktifIs = suggestion);
     }
@@ -136,122 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   scrollDirection: Axis.horizontal,
                   itemCount: aktifIs?.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      margin: const EdgeInsets.all(20),
-                      width: screenSize.width * 0.4,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          gradient: const LinearGradient(colors: [
-                            Color.fromARGB(241, 255, 193, 7),
-                            Color.fromARGB(200, 255, 193, 7),
-                          ])),
-                      child: Column(
-                        // ignore: prefer_const_literals_to_create_immutables
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        aktifIs?[index].resim != null
-                                            ? Expanded(
-                                                flex: 4,
-                                                child: Image.memory(
-                                                  base64Decode(
-                                                      aktifIs![index].resim),
-                                                ),
-                                              )
-                                            : Expanded(
-                                                flex: 4,
-                                                child: Image.asset(
-                                                    "assets/image/Worker.png")),
-                                        Expanded(
-                                          flex: 1,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              aktifIs![index].adSoyad,
-                                              style:
-                                                  const TextStyle(fontSize: 20),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      children: [
-                                        jobsItems(FontAwesome.circle,
-                                            'Yapılacak Miktar : ${aktifIs![index].miktar}'),
-                                        jobsItems(FontAwesome.arrow_circle_left,
-                                            'Yapılan Miktar   : ${aktifIs![index].yapilanMiktar}'),
-                                        jobsItems(FontAwesome.circle_o_notch,
-                                            'Kalan Miktar     : ${aktifIs![index].kalanMiktar}'),
-                                      ],
-                                    ),
-                                  )
-                                ]),
-                          ),
-                          const Divider(
-                            height: 5,
-                            color: kContentColor,
-                          ),
-                          Expanded(
-                            flex: 4,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      jobsItems(Icons.date_range,
-                                          'Başlama Tarihi: ${DateFormat('dd-MM-yyyy').format(aktifIs![index].baslamaTarihi)}'),
-                                      jobsItems(Feather.clock,
-                                          'Başlama Saati: ${DateFormat('mm:ss').format(aktifIs![index].baslamaSaati)}'),
-                                      jobsItems(Icons.numbers,
-                                          'İş Em No: ${aktifIs![index].ieNo}'),
-                                      jobsItems(
-                                          Icons.production_quantity_limits,
-                                          'Cari: Cari Eklenecek'),
-                                      jobsItems(Icons.numbers_sharp,
-                                          'Tazgah Adı: ${aktifIs![index].tezgahAdi}'),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      jobsItems(Icons.code,
-                                          'Ürün Kodu: ${aktifIs![index].stokKodu}'),
-                                      jobsItems(
-                                          Icons
-                                              .production_quantity_limits_sharp,
-                                          'Ürün Adı: ${aktifIs![index].stokAdi}'),
-                                      jobsItems(Icons.numbers,
-                                          'Operasyon No: ${aktifIs![index].operasyonNo}'),
-                                      jobsItems(Icons.near_me,
-                                          'Operasyon Adı: ${aktifIs![index].operasyonAd}'),
-                                      jobsItems(Icons.numbers_sharp,
-                                          'Tazgah Kodu: ${aktifIs![index].tezgahKodu}'),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
+                    return JobCard(aktifIs: aktifIs, screenSize: screenSize, index: index);
                   },
                 ),
               ),
@@ -277,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Icons.search,
             color: Color.fromARGB(241, 255, 193, 7),
           ),
-          hintText: "Tezgah kodu veya iş emri numarası ile ara...",
+          hintText: "Tezgah kodu, iş emri numarası veya operatör adı ile ara...",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(25),
@@ -290,34 +173,3 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Widget jobsItems(IconData icon, String data) {
-  return Expanded(
-    child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-                color: kPrimaryColor, borderRadius: BorderRadius.circular(20)),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(
-                icon,
-                size: 25.0,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              data,
-              style: const TextStyle(fontSize: 15),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}

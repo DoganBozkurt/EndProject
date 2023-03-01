@@ -3,8 +3,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:usis_2/Screen/addJob.dart';
-import 'package:usis_2/Screen/home.dart';
 import 'package:usis_2/constants.dart';
 
 class NavBarItem extends StatefulWidget {
