@@ -8,13 +8,10 @@ import 'package:intl/intl.dart';
 import 'package:usis_2/Model/op.dart';
 import 'package:usis_2/Model/personel.dart';
 import 'package:usis_2/Model/tezgah.dart';
-import 'package:usis_2/Responsive/mobileView.dart';
-import 'package:usis_2/Responsive/responsive_utils.dart';
-import 'package:usis_2/Responsive/tabletView.dart';
-import 'package:usis_2/Responsive/webView.dart';
+import 'package:usis_2/Responsive/responsive.dart';
 import 'package:usis_2/Services/remoteService.dart';
+import 'package:usis_2/Widget/headerTitle.dart';
 import 'package:usis_2/constants.dart';
-import '../Widget/mobileMenu.dart';
 
 class AddJobScreen extends StatefulWidget {
   const AddJobScreen({super.key});
@@ -147,23 +144,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false, //keyboard hatasını çözer
-        drawer: !ResponsiveUtils.isScreenWeb(context) ? mobileMenu() : null,
-        body: Visibility(
-          visible: isLoaded,
-          replacement: const Center(
-            child: CircularProgressIndicator(),
-          ),
-          child: ResponsiveUtils(
-            screenWeb: webView(columnIsPanelli, screenSize, context),
-            screenTablet: tabletView(columnIsPanelli, screenSize, context),
-            screenMobile: mobileView(columnIsPanelli, screenSize, context),
-          ),
-        ),
-      ),
-    );
+    return responsive(context, screenSize,isLoaded,columnIsPanelli);
   }
 
   Widget columnIsPanelli(final BuildContext context, Size screenSize) => Column(
@@ -171,18 +152,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            color: kPrimaryColor,
-            width: screenSize.width,
-            child: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                "İŞ EKLEME PANELİ",
-                style: TextStyle(color: Colors.white, fontSize: 25,fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
+          HeaderTitle(screenSize: screenSize,title: "İŞ EKLE"),
           listDialog(selectPersonel, personelSec, "Operatör Seç", Icons.person),
           listDialog(selectTezgah, tezgahSec, "Tezgah Seç", Icons.list),
           listDialog(selectOp, opSec, "Ürün Ve Operasyon Seç", Icons.join_full),
@@ -323,3 +293,5 @@ class _AddJobScreenState extends State<AddJobScreen> {
     );
   }
 }
+
+

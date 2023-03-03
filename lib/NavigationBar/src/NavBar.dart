@@ -5,6 +5,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:usis_2/NavigationBar/src/NavBarItems.dart';
 import 'package:usis_2/Screen/addJob.dart';
 import 'package:usis_2/Screen/home.dart';
+import 'package:usis_2/Screen/jobDetail.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
@@ -57,6 +58,7 @@ class _NavBarState extends State<NavBar> {
               setState(() {
                 select(2);
               });
+               Navigator.pushNamed(context, JobDetail.pageName);
             },
           ),
           NavBarItem(

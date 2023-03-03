@@ -21,6 +21,7 @@ class AktifIsler {
   double miktar;
   double yapilanMiktar;
   double kalanMiktar;
+  int gttDetayGCID;
   AktifIsler(
       {required this.sNo,
       required this.adSoyad,
@@ -36,7 +37,9 @@ class AktifIsler {
       this.operasyonAd,
       required this.miktar,
       required this.yapilanMiktar,
-      required this.kalanMiktar});
+      required this.kalanMiktar,
+      required this.gttDetayGCID
+      });
   factory AktifIsler.fromJson(Map<String, dynamic> json) => AktifIsler(
         sNo: json["sNo"],
         adSoyad: json["adSoyad"],
@@ -52,5 +55,7 @@ class AktifIsler {
         operasyonAd: json["operasyonAd"],
         miktar: json["miktar"],
         yapilanMiktar: json["yapilanMiktar"],
-        kalanMiktar: json["kalanMiktar"]);
+        kalanMiktar: json["kalanMiktar"],
+        gttDetayGCID: json["gttDetayGCID"]
+        );
 }

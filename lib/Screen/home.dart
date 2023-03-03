@@ -2,13 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:usis_2/Model/AktifIsler.dart';
-import 'package:usis_2/Responsive/mobileView.dart';
-import 'package:usis_2/Responsive/responsive_utils.dart';
-import 'package:usis_2/Responsive/tabletView.dart';
-import 'package:usis_2/Responsive/webView.dart';
+import 'package:usis_2/Responsive/responsive.dart';
+import 'package:usis_2/Screen/jobDetail.dart';
 import 'package:usis_2/Services/remoteService.dart';
 import 'package:usis_2/Widget/jobCard.dart';
-import 'package:usis_2/Widget/mobileMenu.dart';
 import 'package:usis_2/constants.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -48,7 +45,9 @@ class _HomeScreenState extends State<HomeScreen> {
         final isEmriNo = data.ieNo.toString().toLowerCase();
         final operator = data.adSoyad.toString().toLowerCase();
         final input = query.toLowerCase();
-        return tezgahKodu.contains(input) || isEmriNo.contains(input) || operator.contains(input);
+        return tezgahKodu.contains(input) ||
+            isEmriNo.contains(input) ||
+            operator.contains(input);
       }).toList();
       setState(() => aktifIs = suggestion);
     }
@@ -60,23 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false, //keyboard hatasını çözer
-        drawer: !ResponsiveUtils.isScreenWeb(context) ? mobileMenu() : null,
-        body: Visibility(
-          visible: isLoaded,
-          child: ResponsiveUtils(
-            screenWeb: webView(jobsListView, screenSize, context),
-            screenTablet: tabletView(jobsListView, screenSize, context),
-            screenMobile: mobileView(jobsListView, screenSize, context),
-          ),
-          replacement: const Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      ),
-    );
+    return responsive(context, screenSize, isLoaded, jobsListView);
   }
 
   Widget jobsListView(final BuildContext context, Size screenSize) => Container(
@@ -129,12 +112,24 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               flex: 9,
               child: FractionallySizedBox(
-                heightFactor: 0.8,
+                heightFactor: 0.9,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: aktifIs?.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return JobCard(aktifIs: aktifIs, screenSize: screenSize, index: index);
+                    return TextButton(
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.black,
+                      ),
+                      onPressed: () {
+                        secilenID=aktifIs![index].gttDetayGCID;
+                        Navigator.pushNamed(context, JobDetail.pageName);
+                      },
+                      child: JobCard(
+                          aktifIs: aktifIs,
+                          screenSize: screenSize,
+                          index: index),
+                    );
                   },
                 ),
               ),
@@ -160,7 +155,8 @@ class _HomeScreenState extends State<HomeScreen> {
             Icons.search,
             color: Color.fromARGB(241, 255, 193, 7),
           ),
-          hintText: "Tezgah kodu, iş emri numarası veya operatör adı ile ara...",
+          hintText:
+              "Tezgah kodu, iş emri numarası veya operatör adı ile ara...",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(25),
@@ -172,4 +168,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

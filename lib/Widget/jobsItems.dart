@@ -9,23 +9,29 @@ Widget jobsItems(IconData icon, String data) {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Container(
-            decoration: BoxDecoration(
-                color: kPrimaryColor, borderRadius: BorderRadius.circular(20)),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(
-                icon,
-                size: 25.0,
-                color: Colors.white,
+          Expanded(
+            flex: 2,
+            child: Container(
+              decoration: BoxDecoration(
+                  color: kPrimaryColor, borderRadius: BorderRadius.circular(20)),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  icon,
+                  size: 30.0,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              data,
-              style: const TextStyle(fontSize: 15),
+          Expanded(
+            flex: 8,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                data,
+                style: const TextStyle(fontSize: 15),
+              ),
             ),
           ),
         ],

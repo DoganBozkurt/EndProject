@@ -64,4 +64,13 @@ class RemoteService {
     }
     return null;
   }
+  Future<List<AktifIsler>?> getSecilAktifIs(int id) async {
+    var url = Uri.parse('$constUrl/api/AktifIsler/$id');
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var json = response.body;
+      return aktifIslerFromJson(json);
+    }
+    return null;
+  }
 }

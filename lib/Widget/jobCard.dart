@@ -22,10 +22,10 @@ class JobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-      margin: const EdgeInsets.all(20),
+      margin: const EdgeInsets.all(2),
       width: screenSize.width * 0.4,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(5),
           gradient: const LinearGradient(colors: [
             Color.fromARGB(241, 255, 193, 7),
             Color.fromARGB(200, 255, 193, 7),
