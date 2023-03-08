@@ -4,6 +4,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:drop_down_list/drop_down_list.dart';
 import 'package:drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:usis_2/Model/op.dart';
 import 'package:usis_2/Model/personel.dart';
@@ -86,7 +87,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
     }
   }
 
-  void selectTimePicker() async {
+  selectTimePicker() async {
     var saat = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -144,67 +145,83 @@ class _AddJobScreenState extends State<AddJobScreen> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    return responsive(context, screenSize,isLoaded,columnIsPanelli);
+    return responsive(context, screenSize, isLoaded, columnIsPanelli);
   }
 
-  Widget columnIsPanelli(final BuildContext context, Size screenSize) => Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          HeaderTitle(screenSize: screenSize,title: "İŞ EKLE"),
-          listDialog(selectPersonel, personelSec, "Operatör Seç", Icons.person),
-          listDialog(selectTezgah, tezgahSec, "Tezgah Seç", Icons.list),
-          listDialog(selectOp, opSec, "Ürün Ve Operasyon Seç", Icons.join_full),
-          Row(
-            children: [
-              rowTarih(context),
-              rowSaat(context),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
+  Widget columnIsPanelli(final BuildContext context, Size screenSize) =>
+      Container(
+        color: kContentColor,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            HeaderTitle(screenSize: screenSize, title: "İŞ EKLE"),
+            listDialog(
+                selectPersonel, personelSec, "Operatör Seç", Icons.person),
+            listDialog(selectTezgah, tezgahSec, "Tezgah Seç", Icons.list),
+            listDialog(
+                selectOp, opSec, "Ürün Ve Operasyon Seç", Icons.join_full),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                buttonOutlined(context, Icons.date_range_rounded, 'Tarih seç', 'Tarih şeçilmedi', baslamaTarihiFormatli),
+                buttonOutlined(
+                    context,
+                    FontAwesome.clock_o,
+                    'Saat seç',
+                    'Saat şeçilmedi',
+                    baslamaSaati?.format(context).toString()),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
                   shadowColor: kContentColor,
                   backgroundColor: kPrimaryColor,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5))),
-              onPressed: () async {
-                if (personelSec.text != "" &&
-                    tezgahSec.text != "" &&
-                    opSec.text != "" &&
-                    baslamaSaati != "" &&
-                    baslamaTarihi != "") {
-                  var result = await RemoteService().postIsBaslat(mapPostData);
-                  if (result == true) {
-                    islemDialog(context, "İşlem Başarılı",
-                        "İş başarıyla başlatıldı.", DialogType.success);
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  side: const BorderSide(color: Colors.greenAccent, width: 1),
+                ),
+                onPressed: () async {
+                  if (personelSec.text != "" &&
+                      tezgahSec.text != "" &&
+                      opSec.text != "" &&
+                      baslamaSaati != "" &&
+                      baslamaTarihi != "") {
+                    var result =
+                        await RemoteService().postIsBaslat(mapPostData);
+                    if (result == true) {
+                      islemDialog(context, "İşlem Başarılı",
+                          "İş başarıyla başlatıldı.", DialogType.success);
+                    } else {
+                      islemDialog(
+                          context,
+                          "İşlem Başarısız",
+                          "İş başlatılmadı lütfen tekrar deneyiniz.",
+                          DialogType.error);
+                    }
                   } else {
                     islemDialog(
                         context,
-                        "İşlem Başarısız",
-                        "İş başlatılmadı lütfen tekrar deneyiniz.",
-                        DialogType.error);
+                        "Eksik Alan",
+                        "İş başlatılmadı lütfen tüm gerekli bilgileri giriniz.",
+                        DialogType.info);
                   }
-                } else {
-                  islemDialog(
-                      context,
-                      "Eksik Alan",
-                      "İş başlatılmadı lütfen tüm gerekli bilgileri giriniz.",
-                      DialogType.info);
-                }
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  "BAŞLA",
-                  style: TextStyle(fontSize: 25),
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: Text(
+                    "İ Ş   B A Ş L A T",
+                    style: TextStyle(fontSize: 24),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
 
   Padding listDialog(List<SelectedListItem> selectList,
@@ -216,82 +233,71 @@ class _AddJobScreenState extends State<AddJobScreen> {
         readOnly: true,
         onTap: () => onTextFieldTap(selectList, nullHintTxt),
         decoration: InputDecoration(
-          contentPadding: const EdgeInsets.all(25),
-          hintText: hintTxt.text == "" ? nullHintTxt : hintTxt.text,
-          hintStyle: const TextStyle(fontSize: 20),
-          border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(5),
+            contentPadding: const EdgeInsets.all(25),
+            hintText: hintTxt.text == "" ? nullHintTxt : hintTxt.text,
+            hintStyle: const TextStyle(fontSize: 16, color: Colors.greenAccent),
+            border: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(5),
+              ),
             ),
-            borderSide: BorderSide(color: kPrimaryColor),
-          ),
-          suffixIcon: Icon(icon),
-        ),
+            enabledBorder: const OutlineInputBorder(
+                borderSide: BorderSide(width: 1, color: Colors.greenAccent)),
+            suffixIcon: Icon(icon),
+            suffixIconColor: const Color.fromARGB(241, 255, 193, 7)),
       ),
     );
   }
 
-  Widget rowTarih(BuildContext context) {
+  Widget buttonOutlined(BuildContext context, IconData icon, String textLable, String bilgiSecText, String? bilgiSeciliMi) {
     return Row(
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [
-                  Color.fromARGB(241, 255, 193, 7),
-                  Color.fromARGB(200, 255, 193, 7),
-                ]),
-                borderRadius: BorderRadius.circular(2),
-                boxShadow: const <BoxShadow>[BoxShadow(blurRadius: 3)]),
-            child: TextButton(
-              onPressed: () {
-                selectDateTime(context);
-              },
-              child: const Text(
-                "Tarih Seç",
-                style: TextStyle(color: Colors.white,fontSize: 20),
-              ),
+          child: OutlinedButton(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  color: const Color.fromARGB(241, 255, 193, 7),
+                  size: 35,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text(
+                    textLable,
+                    style: const TextStyle(
+                        color: Colors.greenAccent),
+                  ),
+                ),
+              ],
+            ),
+            onPressed: () {
+              textLable == 'Saat seç'
+                  ? selectTimePicker()
+                  : selectDateTime(context);
+            },
+            style: ElevatedButton.styleFrom(
+              foregroundColor: kPrimaryColor,
+              padding: const EdgeInsets.all(4),
+              textStyle:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              elevation: 15,
+              side: const BorderSide(color: Color.fromARGB(241, 255, 193, 7), width: 1),
             ),
           ),
         ),
-        baslamaTarihiFormatli != null
-            ? Text("$baslamaTarihiFormatli")
-            : const Text(":Tarih şeçilmedi",style: TextStyle(fontSize: 18))
-      ],
-    );
-  }
-
-  Widget rowSaat(BuildContext context) {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [
-                  Color.fromARGB(241, 255, 193, 7),
-                  Color.fromARGB(200, 255, 193, 7),
-                ]),
-                borderRadius: BorderRadius.circular(2),
-                boxShadow: const <BoxShadow>[BoxShadow(blurRadius: 3)]),
-            child: TextButton(
-              onPressed: () {
-                selectTimePicker();
-              },
-              child: const Text(
-                "Saat Seç",
-                style: TextStyle(color: Colors.white,fontSize: 20),
-              ),
-            ),
-          ),
-        ),
-        baslamaSaati != null
-            ? Text(baslamaSaati!.format(context).toString())
-            : const Text(":Saat şeçilmedi",style: TextStyle(fontSize: 18))
+        bilgiSeciliMi != null
+            ? Text(
+                bilgiSeciliMi,
+                style: const TextStyle(
+                  color: Colors.greenAccent,
+                ),
+              )
+            : Text(":$bilgiSecText",
+                style: const TextStyle(fontSize: 18, color: Colors.greenAccent))
       ],
     );
   }
 }
-
-

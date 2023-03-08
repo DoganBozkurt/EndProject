@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:usis_2/Model/AktifIsler.dart';
 import 'package:usis_2/Responsive/responsive.dart';
+import 'package:usis_2/Screen/home.dart';
 import 'package:usis_2/Services/remoteService.dart';
 import 'package:usis_2/Widget/headerTitle.dart';
 import 'package:usis_2/Widget/jobCard.dart';
@@ -35,6 +36,10 @@ class _JobDetailState extends State<JobDetail> {
     }
   }
 
+  gidecek(BuildContext context, String ekran) {
+    Navigator.pushNamed(context, ekran);
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -65,13 +70,19 @@ class _JobDetailState extends State<JobDetail> {
                 padding: const EdgeInsets.all(5.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children:  [
-                  ButtonOutlined( icon: Icons.add, textLable: 'Yapılan iş kaydet', outlineColor: Colors.red,),
-                  ButtonOutlined( icon: Icons.add, textLable: 'Arza kaydet', outlineColor: Colors.green,),
-                  ButtonOutlined( icon: Icons.add, textLable: 'Fire kaydet', outlineColor: Colors.amber,),
-                  ButtonOutlined( icon: Icons.add, textLable: 'Duruş kaydet', outlineColor: Colors.red,),
-                  ButtonOutlined( icon: Icons.add, textLable: 'Kalite kontrol', outlineColor: Colors.blueGrey,),
-                  ButtonOutlined( icon: Icons.add, textLable: 'Op kalite kon.', outlineColor: Colors.pink,),
+                  children: [
+                    buttonOutlined(Icons.add, 'Yapılan iş kaydet', Colors.red,
+                        HomeScreen.pageName),
+                    buttonOutlined(Icons.add, 'Arza kaydet', Colors.green,
+                        HomeScreen.pageName),
+                    buttonOutlined(Icons.add, 'Fire kaydet', Colors.amber,
+                        HomeScreen.pageName),
+                    buttonOutlined(Icons.add, 'Duruş kaydet', Colors.red,
+                        HomeScreen.pageName),
+                    buttonOutlined(Icons.add, 'Kalite kontrol', Colors.blueGrey,
+                        HomeScreen.pageName),
+                    buttonOutlined(Icons.add, 'Op kalite kon.', Colors.pink,
+                        HomeScreen.pageName),
                   ],
                 ),
               ),
@@ -79,46 +90,43 @@ class _JobDetailState extends State<JobDetail> {
           ],
         ),
       );
-}
 
-class ButtonOutlined extends StatelessWidget {
-  IconData icon;
-  String textLable;
-  Color outlineColor;
-   ButtonOutlined({
-    super.key,
-    required this.icon,
-    required this.textLable,
-    required this.outlineColor
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget buttonOutlined(IconData icon, String textLable, Color outlineColor,
+      String gidilecekEkran) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(2.0),
         child: OutlinedButton(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children:  [
-              Icon(icon,color: const Color.fromARGB(241, 255, 193, 7),size: 35,),
+            children: [
+              Icon(
+                icon,
+                color: const Color.fromARGB(241, 255, 193, 7),
+                size: 35,
+              ),
               Padding(
                 padding: const EdgeInsets.all(4.0),
-                child: Text(textLable,style: const TextStyle(color: Color.fromARGB(241, 255, 193, 7)),),
+                child: Text(
+                  textLable,
+                  style:
+                      const TextStyle(color: Color.fromARGB(241, 255, 193, 7)),
+                ),
               ),
             ],
           ),
-          onPressed: () {},
+          onPressed: () {
+            gidecek(context, gidilecekEkran);
+          },
           style: ElevatedButton.styleFrom(
-              foregroundColor: kPrimaryColor,
-              padding: const EdgeInsets.all(4),
-             // backgroundColor: Colors.yellow,
-              textStyle: const TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold),
-              elevation: 15,
-              side:  BorderSide(
-                  color: outlineColor, width: 2),
-              ),
+            foregroundColor: kPrimaryColor,
+            padding: const EdgeInsets.all(4),
+            // backgroundColor: Colors.yellow,
+            textStyle:
+                const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            elevation: 15,
+            side: BorderSide(color: outlineColor, width: 2),
+          ),
         ),
       ),
     );

@@ -18,7 +18,7 @@ class HeaderTitle extends StatelessWidget {
           title,
           style: const TextStyle(
             fontWeight: FontWeight.w700,
-            color: Colors.white70,
+            color: Colors.greenAccent,
             fontSize: 24.0,
           ),
           textAlign: TextAlign.center,
