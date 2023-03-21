@@ -215,7 +215,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
                   padding: EdgeInsets.all(5.0),
                   child: Text(
                     "İ Ş   B A Ş L A T",
-                    style: TextStyle(fontSize: 24),
+                    style: TextStyle(fontSize: 24,color: Color.fromARGB(241, 255, 193, 7)),
                   ),
                 ),
               ),

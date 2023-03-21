@@ -7,6 +7,8 @@ import 'package:usis_2/Model/tezgah.dart';
 import 'package:usis_2/constants.dart';
 import 'package:http/http.dart' as http;
 
+import '../Model/durus.dart';
+
 class RemoteService {
   Future<List<Personel>?> getPersonel() async {
     var url = Uri.parse('$constUrl/api/personel');
@@ -55,7 +57,8 @@ class RemoteService {
     }
     return false;
   }
-    Future<List<AktifIsler>?> getAktifIsler() async {
+
+  Future<List<AktifIsler>?> getAktifIsler() async {
     var url = Uri.parse('$constUrl/api/AktifIsler');
     var response = await http.get(url);
     if (response.statusCode == 200) {
@@ -64,6 +67,7 @@ class RemoteService {
     }
     return null;
   }
+
   Future<List<AktifIsler>?> getSecilAktifIs(int id) async {
     var url = Uri.parse('$constUrl/api/AktifIsler/$id');
     var response = await http.get(url);
@@ -72,5 +76,43 @@ class RemoteService {
       return aktifIslerFromJson(json);
     }
     return null;
+  }
+
+  Future<bool> postYapilanIsEkle(Map mapVeriler) async {
+    var url = Uri.parse('$constUrl/api/Op/OpKaydet');
+    var response = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+          "charset": "utf-8",
+        },
+        body: jsonEncode(mapVeriler));
+    if (response.statusCode == 200) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<List<Durus>?> getDurus() async {
+    var url = Uri.parse('$constUrl/api/Durus');
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var json = response.body;
+      return durusFromJson(json);
+    }
+    return null;
+  }
+
+  Future<bool> postDurus(Map mapVeriler) async {
+    var url = Uri.parse('$constUrl/api/Durus/Kaydet');
+    var response = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+          "charset": "utf-8",
+        },
+        body: jsonEncode(mapVeriler));
+    if (response.statusCode == 200) {
+      return true;
+    }
+    return false;
   }
 }

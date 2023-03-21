@@ -2,7 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:usis_2/Model/AktifIsler.dart';
 import 'package:usis_2/Responsive/responsive.dart';
-import 'package:usis_2/Screen/home.dart';
+import 'package:usis_2/Screen/durusKaydet.dart';
+import 'package:usis_2/Screen/yapilanIsEkle.dart';
 import 'package:usis_2/Services/remoteService.dart';
 import 'package:usis_2/Widget/headerTitle.dart';
 import 'package:usis_2/Widget/jobCard.dart';
@@ -36,8 +37,11 @@ class _JobDetailState extends State<JobDetail> {
     }
   }
 
-  gidecek(BuildContext context, String ekran) {
-    Navigator.pushNamed(context, ekran);
+  gidecek(BuildContext context, Widget ekran) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) =>  ekran);
   }
 
   @override
@@ -71,18 +75,18 @@ class _JobDetailState extends State<JobDetail> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    buttonOutlined(Icons.add, 'Yapılan iş kaydet', Colors.red,
-                        HomeScreen.pageName),
-                    buttonOutlined(Icons.add, 'Arza kaydet', Colors.green,
-                        HomeScreen.pageName),
-                    buttonOutlined(Icons.add, 'Fire kaydet', Colors.amber,
-                        HomeScreen.pageName),
-                    buttonOutlined(Icons.add, 'Duruş kaydet', Colors.red,
-                        HomeScreen.pageName),
-                    buttonOutlined(Icons.add, 'Kalite kontrol', Colors.blueGrey,
-                        HomeScreen.pageName),
-                    buttonOutlined(Icons.add, 'Op kalite kon.', Colors.pink,
-                        HomeScreen.pageName),
+                    buttonOutlined(Icons.add, 'Operasyon Kaydet', Colors.red,
+                        const YapilanIsEkle()),
+                    buttonOutlined(Icons.add, 'Duruş Kaydet', Colors.green,
+                        const DurusKaydet()),
+                    buttonOutlined(Icons.add, 'Fire Kaydet', Colors.amber,
+                        const YapilanIsEkle()),
+                    buttonOutlined(Icons.add, 'Arıza Kaydet', Colors.red,
+                        const YapilanIsEkle()),
+                    buttonOutlined(Icons.add, 'Kalite Kontrol', Colors.blueGrey,
+                        const YapilanIsEkle()),
+                    buttonOutlined(Icons.add, 'Oprt. Kalite Kontrol', Colors.pink,
+                        const YapilanIsEkle()),
                   ],
                 ),
               ),
@@ -92,7 +96,7 @@ class _JobDetailState extends State<JobDetail> {
       );
 
   Widget buttonOutlined(IconData icon, String textLable, Color outlineColor,
-      String gidilecekEkran) {
+      Widget gidilecekEkran) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(2.0),
@@ -105,12 +109,14 @@ class _JobDetailState extends State<JobDetail> {
                 color: const Color.fromARGB(241, 255, 193, 7),
                 size: 35,
               ),
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Text(
-                  textLable,
-                  style:
-                      const TextStyle(color: Color.fromARGB(241, 255, 193, 7)),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text(
+                    textLable,
+                    style:
+                        const TextStyle(color: Color.fromARGB(241, 255, 193, 7)),
+                  ),
                 ),
               ),
             ],
